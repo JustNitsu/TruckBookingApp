@@ -21,8 +21,10 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun setupRoleSpinner() {
         val spinner = findViewById<Spinner>(R.id.spinnerRole)
-        // We only allow User and Owner. "Admin" is removed as requested.
+
+        // REMOVED "Admin" from this list. Only User and Owner can sign up.
         val roles = arrayOf("User", "Owner")
+
         spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, roles)
     }
 
@@ -30,31 +32,23 @@ class RegisterActivity : AppCompatActivity() {
         val btnRegister = findViewById<Button>(R.id.btnRegister)
         val etUser = findViewById<EditText>(R.id.etRegUser)
         val etPass = findViewById<EditText>(R.id.etRegPass)
+        val etPhone = findViewById<EditText>(R.id.etRegPhone) // Ensure this exists in XML
         val spinner = findViewById<Spinner>(R.id.spinnerRole)
-        val etPhone = findViewById<EditText>(R.id.etRegPhone) // Find view
 
         btnRegister.setOnClickListener {
-            val user = etUser.text.toString().trim()
-            val pass = etPass.text.toString().trim()
-            val phone = etPhone.text.toString().trim() // Get phone
+            val username = etUser.text.toString().trim()
+            val password = etPass.text.toString().trim()
+            val phone = etPhone.text.toString().trim()
             val role = spinner.selectedItem.toString()
 
-            if(user.isNotEmpty() && pass.isNotEmpty() && phone.isNotEmpty()) {
-                // Pass phone to DB
-                if(db.insertUser(user, pass, role, phone)) {
-                    Toast.makeText(this, "Created!", Toast.LENGTH_SHORT).show()
-                    finish()
-                } else {
-                    Toast.makeText(this, "Username already exists. Try another.", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+            if (validateInput(username, password, phone)) {
+                saveUserToDatabase(username, password, role, phone)
             }
         }
     }
 
-    private fun validateInput(user: String, pass: String): Boolean {
-        if (user.isEmpty() || pass.isEmpty()) {
+    private fun validateInput(user: String, pass: String, phone: String): Boolean {
+        if (user.isEmpty() || pass.isEmpty() || phone.isEmpty()) {
             Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
             return false
         }
@@ -69,7 +63,7 @@ class RegisterActivity : AppCompatActivity() {
         val success = db.insertUser(user, pass, role, phone)
         if (success) {
             Toast.makeText(this, "Account Created Successfully!", Toast.LENGTH_LONG).show()
-            finish() // Close this screen and return to Login
+            finish()
         } else {
             Toast.makeText(this, "Username already exists. Try another.", Toast.LENGTH_SHORT).show()
         }
@@ -78,7 +72,7 @@ class RegisterActivity : AppCompatActivity() {
     private fun setupLoginLink() {
         val tvLogin = findViewById<TextView>(R.id.tvGoToLogin)
         tvLogin.setOnClickListener {
-            finish() // Simply closes this activity to reveal the Login screen behind it
+            finish()
         }
     }
 }

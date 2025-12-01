@@ -62,6 +62,17 @@
         android:padding="8dp"
         app:tint="#4CAF50"
         android:focusable="false"
-            android:focusableInTouchMode="false"/>
+        android:focusableInTouchMode="false"/>
 
+    <ImageButton
+        android:id="@+id/btnMap"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:src="@android:drawable/ic_dialog_map"
+        android:background="#E3F2FD"
+        android:tint="#1976D2"
+        android:padding="8dp"
+        android:layout_marginLeft="10dp"
+        android:focusable="false"
+        android:focusableInTouchMode="false"/>
 </LinearLayout>

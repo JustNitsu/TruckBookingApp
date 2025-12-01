@@ -26,7 +26,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Welcome User"
+            android:text="Welcome"
             android:textSize="20sp"
             android:textColor="#FFFFFF"
             android:textStyle="bold"/>
@@ -74,23 +74,16 @@
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" text="Select Date:"/>
                 <EditText android:id="@+id/etDate" android:layout_width="match_parent" android:layout_height="50dp" android:hint="Click to pick date" android:focusable="false" android:clickable="true" android:background="#EEEEEE" android:padding="10dp" android:layout_marginBottom="15dp"/>
 
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" text="Delivery Address:"/>
+                <EditText android:id="@+id/etAddress" android:layout_width="match_parent" android:layout_height="50dp" android:hint="City or Street" android:background="#EEEEEE" android:padding="10dp" android:layout_marginBottom="15dp"/>
+
                 <Button android:id="@+id/btnBook" android:layout_width="match_parent" android:layout_height="50dp" android:text="Confirm Booking" android:backgroundTint="#FF9800"/>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#DDDDDD" android:layout_marginTop="20dp" android:layout_marginBottom="10dp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="My Booking History"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="10dp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" text="My Booking History" android:textSize="16sp" android:textStyle="bold" android:layout_marginBottom="10dp"/>
 
-                <ListView
-                    android:id="@+id/listUserHistory"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:background="#FAFAFA"/>
+                <ListView android:id="@+id/listUserHistory" android:layout_width="match_parent" android:layout_height="200dp" android:background="#FAFAFA"/>
 
             </LinearLayout>
 
@@ -114,20 +107,8 @@
                     android:gravity="center"
                     android:layout_marginBottom="15dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Total Earnings (Approved)"
-                        android:textColor="#1976D2"/>
-
-                    <TextView
-                        android:id="@+id/txtTotalEarnings"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="$0"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        android:textColor="#1976D2"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" text="Total Earnings (Approved)" android:textColor="#1976D2"/>
+                    <TextView android:id="@+id/txtTotalEarnings" android:layout_width="wrap_content" android:layout_height="wrap_content" text="$0" android:textSize="24sp" android:textStyle="bold" android:textColor="#1976D2"/>
                 </LinearLayout>
 
                 <EditText
@@ -148,41 +129,50 @@
                     android:gravity="center_vertical"
                     android:layout_marginBottom="15dp">
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Current Orders"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#333333"/>
-
-                    <Button
-                        android:id="@+id/btnRefresh"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:text="Refresh"
-                        android:textSize="12sp"
-                        android:backgroundTint="#4CAF50"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" text="Current Orders" android:textSize="18sp" android:textStyle="bold" android:textColor="#333333"/>
+                    <Button android:id="@+id/btnRefresh" android:layout_width="wrap_content" android:layout_height="40dp" android:text="Refresh" android:textSize="12sp" android:backgroundTint="#4CAF50"/>
                 </LinearLayout>
 
+                <ListView android:id="@+id/listView" android:layout_width="match_parent" android:layout_height="350dp" android:background="#FAFAFA" android:divider="#DDDDDD" android:dividerHeight="1dp"/>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" text="Tap item for options. Tap Call/Map to act." android:textSize="12sp" android:gravity="center" android:layout_marginTop="10dp" android:textColor="#888"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutAdmin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#FFFFFF"
+                android:padding="20dp"
+                android:elevation="2dp"
+                android:layout_marginBottom="20dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Admin Panel: Manage Users"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#D32F2F"
+                    android:layout_marginBottom="15dp"/>
+
                 <ListView
-                    android:id="@+id/listView"
+                    android:id="@+id/listAllUsers"
                     android:layout_width="match_parent"
-                    android:layout_height="350dp"
+                    android:layout_height="300dp"
                     android:background="#FAFAFA"
-                    android:divider="#DDDDDD"
+                    android:divider="#EEEEEE"
                     android:dividerHeight="1dp"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Tip: Long-press an item to delete it."
-                    android:textSize="12sp"
+                    android:text="Tap a user to delete them."
                     android:gravity="center"
                     android:layout_marginTop="10dp"
-                    android:textColor="#888888"
-                    android:fontFamily="sans-serif-light"/>
+                    android:textColor="#888"/>
             </LinearLayout>
 
             <Button

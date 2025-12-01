@@ -9,11 +9,10 @@ import android.view.ViewGroup
 import android.widget.*
 import android.graphics.Color
 
-// Updated Constructor: Now accepts a function 'onItemClick'
 class BookingAdapter(
     var context: Context,
     var list: ArrayList<String>,
-    val onItemClick: (String, String) -> Unit // Logic passed from Dashboard
+    val onItemClick: (String, String) -> Unit
 ) : BaseAdapter() {
 
     override fun getCount(): Int { return list.size }
@@ -24,12 +23,16 @@ class BookingAdapter(
         val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_booking, parent, false)
 
         val data = list[position].split("|")
+        // Safety check: Ensure we have enough data fields
+        if (data.size < 7) return view
+
         val equip = data[0]
         val date = data[1]
         val price = data[2]
         val status = data[3]
         val user = data[4]
         val phone = data[5]
+        val address = data[6] // Get the Address
 
         val imgTruck = view.findViewById<ImageView>(R.id.imgTruck)
         val tvEquip = view.findViewById<TextView>(R.id.tvEquipment)
@@ -37,38 +40,51 @@ class BookingAdapter(
         val tvStatus = view.findViewById<TextView>(R.id.tvStatus)
         val tvUser = view.findViewById<TextView>(R.id.tvUser)
         val btnCall = view.findViewById<ImageButton>(R.id.btnCall)
+        val btnMap = view.findViewById<ImageButton>(R.id.btnMap) // The new Map Button
 
         tvEquip.text = equip
         tvDetails.text = "$date | $$price"
         tvStatus.text = status
-        tvUser.text = "By: $user"
+        tvUser.text = "By: $user\nLoc: $address" // Show address on screen
 
+        // Colors
         if(status == "Approved") tvStatus.setTextColor(Color.parseColor("#4CAF50"))
         else if(status == "Rejected") tvStatus.setTextColor(Color.RED)
         else tvStatus.setTextColor(Color.parseColor("#FF9800"))
 
+        // Images
         when(equip) {
             "Excavator" -> imgTruck.setImageResource(android.R.drawable.ic_menu_preferences)
             "Dump Truck" -> imgTruck.setImageResource(android.R.drawable.ic_menu_send)
-            "Bulldozer" -> imgTruck.setImageResource(android.R.drawable.ic_menu_mapmode)
             else -> imgTruck.setImageResource(android.R.drawable.ic_menu_gallery)
         }
 
-        // --- THE FIX: HANDLE ROW CLICK HERE ---
-        // This makes the whole row clickable, ignoring the "stealing" issue
-        view.setOnClickListener {
-            onItemClick(equip, date) // Run the Approve/Reject logic
-        }
+        view.setOnClickListener { onItemClick(equip, date) }
 
-        // Handle Call Button separately
+        // Call Logic
         btnCall.setOnClickListener {
             val intent = Intent(Intent.ACTION_DIAL)
             intent.data = Uri.parse("tel:$phone")
             context.startActivity(intent)
         }
-        // Force the call button to capture its own focus so it doesn't block the row
         btnCall.isFocusable = false
-        btnCall.isFocusableInTouchMode = false
+
+        // MAP LOGIC
+        btnMap.setOnClickListener {
+            // Open Google Maps searching for the address
+            val mapUri = Uri.parse("geo:0,0?q=" + Uri.encode(address))
+            val mapIntent = Intent(Intent.ACTION_VIEW, mapUri)
+            mapIntent.setPackage("com.google.android.apps.maps")
+
+            if (mapIntent.resolveActivity(context.packageManager) != null) {
+                context.startActivity(mapIntent)
+            } else {
+                // If Google Maps isn't installed, open browser map
+                val generalMapIntent = Intent(Intent.ACTION_VIEW, mapUri)
+                context.startActivity(generalMapIntent)
+            }
+        }
+        btnMap.isFocusable = false
 
         return view
     }
