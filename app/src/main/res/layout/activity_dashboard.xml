@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#1976D2"
+        android:padding="15dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:elevation="4dp">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/app_logo"
+            android:layout_marginEnd="15dp"/>
+
+        <TextView
+            android:id="@+id/txtWelcome"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Welcome User"
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"/>
+
+        <ImageButton
+            android:id="@+id/btnProfile"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@android:drawable/ic_menu_manage"
+            android:background="#0D47A1"
+            android:padding="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Settings"
+            app:tint="#FFFFFF" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <LinearLayout
+                android:id="@+id/layoutUser"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#FFFFFF"
+                android:padding="20dp"
+                android:elevation="2dp"
+                android:layout_marginBottom="20dp"
+                android:visibility="gone">
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" text="New Booking" android:textStyle="bold" android:layout_marginBottom="10dp"/>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" text="Select Equipment:"/>
+                <Spinner android:id="@+id/spinnerTruck" android:layout_width="match_parent" android:layout_height="50dp" android:background="#EEEEEE" android:layout_marginBottom="10dp"/>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" text="Select Date:"/>
+                <EditText android:id="@+id/etDate" android:layout_width="match_parent" android:layout_height="50dp" android:hint="Click to pick date" android:focusable="false" android:clickable="true" android:background="#EEEEEE" android:padding="10dp" android:layout_marginBottom="15dp"/>
+
+                <Button android:id="@+id/btnBook" android:layout_width="match_parent" android:layout_height="50dp" android:text="Confirm Booking" android:backgroundTint="#FF9800"/>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#DDDDDD" android:layout_marginTop="20dp" android:layout_marginBottom="10dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="My Booking History"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp"/>
+
+                <ListView
+                    android:id="@+id/listUserHistory"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:background="#FAFAFA"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutOwner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#FFFFFF"
+                android:padding="20dp"
+                android:elevation="2dp"
+                android:layout_marginBottom="20dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#E3F2FD"
+                    android:padding="15dp"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_marginBottom="15dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total Earnings (Approved)"
+                        android:textColor="#1976D2"/>
+
+                    <TextView
+                        android:id="@+id/txtTotalEarnings"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$0"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:textColor="#1976D2"/>
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/etSearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:hint="Search bookings..."
+                    android:background="#EEEEEE"
+                    android:padding="10dp"
+                    android:drawableStart="@android:drawable/ic_menu_search"
+                    android:drawablePadding="10dp"
+                    android:layout_marginBottom="15dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="15dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Current Orders"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333"/>
+
+                    <Button
+                        android:id="@+id/btnRefresh"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:text="Refresh"
+                        android:textSize="12sp"
+                        android:backgroundTint="#4CAF50"/>
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/listView"
+                    android:layout_width="match_parent"
+                    android:layout_height="350dp"
+                    android:background="#FAFAFA"
+                    android:divider="#DDDDDD"
+                    android:dividerHeight="1dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tip: Long-press an item to delete it."
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:textColor="#888888"
+                    android:fontFamily="sans-serif-light"/>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Log Out"
+                android:textColor="#D32F2F"
+                android:backgroundTint="#FFFFFF"
+                android:layout_marginTop="10dp"
+                style="?android:attr/borderlessButtonStyle"/>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

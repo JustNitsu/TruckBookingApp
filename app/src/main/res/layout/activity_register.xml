@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#F2F2F2"
+    android:padding="30dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:padding="24dp"
+        android:elevation="4dp">
+
+        <ImageView
+            android:layout_width="195dp"
+            android:layout_height="142dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/app_logo" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Create Account"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:gravity="center"
+            android:layout_marginBottom="30dp"/>
+
+        <EditText
+            android:id="@+id/etRegUser"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="New Username"
+            android:background="#F5F5F5"
+            android:padding="10dp"
+            android:layout_marginBottom="15dp"/>
+
+        <EditText
+            android:id="@+id/etRegPass"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="New Password"
+            android:inputType="textPassword"
+            android:background="#F5F5F5"
+            android:padding="10dp"
+            android:layout_marginBottom="15dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="I am a:"
+            android:textColor="#666"/>
+
+        <Spinner
+            android:id="@+id/spinnerRole"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#F5F5F5"
+            android:layout_marginBottom="25dp"/>
+
+        <Button
+            android:id="@+id/btnRegister"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="SIGN UP"
+            android:backgroundTint="#388E3C"/>
+
+        <TextView
+            android:id="@+id/tvGoToLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Already have an account? Login"
+            android:textColor="#1976D2"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:padding="10dp"/>
+
+    </LinearLayout>
+</LinearLayout>
