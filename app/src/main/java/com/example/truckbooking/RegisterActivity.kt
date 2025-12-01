@@ -31,14 +31,24 @@ class RegisterActivity : AppCompatActivity() {
         val etUser = findViewById<EditText>(R.id.etRegUser)
         val etPass = findViewById<EditText>(R.id.etRegPass)
         val spinner = findViewById<Spinner>(R.id.spinnerRole)
+        val etPhone = findViewById<EditText>(R.id.etRegPhone) // Find view
 
         btnRegister.setOnClickListener {
-            val username = etUser.text.toString().trim()
-            val password = etPass.text.toString().trim()
+            val user = etUser.text.toString().trim()
+            val pass = etPass.text.toString().trim()
+            val phone = etPhone.text.toString().trim() // Get phone
             val role = spinner.selectedItem.toString()
 
-            if (validateInput(username, password)) {
-                saveUserToDatabase(username, password, role)
+            if(user.isNotEmpty() && pass.isNotEmpty() && phone.isNotEmpty()) {
+                // Pass phone to DB
+                if(db.insertUser(user, pass, role, phone)) {
+                    Toast.makeText(this, "Created!", Toast.LENGTH_SHORT).show()
+                    finish()
+                } else {
+                    Toast.makeText(this, "Username already exists. Try another.", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -55,8 +65,8 @@ class RegisterActivity : AppCompatActivity() {
         return true
     }
 
-    private fun saveUserToDatabase(user: String, pass: String, role: String) {
-        val success = db.insertUser(user, pass, role)
+    private fun saveUserToDatabase(user: String, pass: String, role: String, phone: String) {
+        val success = db.insertUser(user, pass, role, phone)
         if (success) {
             Toast.makeText(this, "Account Created Successfully!", Toast.LENGTH_LONG).show()
             finish() // Close this screen and return to Login

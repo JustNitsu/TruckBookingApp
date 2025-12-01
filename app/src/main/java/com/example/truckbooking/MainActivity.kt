@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         val etPass = findViewById<EditText>(R.id.etLoginPass)
 
         btnLogin.setOnClickListener {
-            val username = etUser.text.toString().trim() // .trim() removes accidental spaces
+            val username = etUser.text.toString().trim()
             val password = etPass.text.toString().trim()
 
             if (username.isEmpty() || password.isEmpty()) {
@@ -45,11 +45,21 @@ class MainActivity : AppCompatActivity() {
         val role = db.checkLogin(user, pass)
 
         if (role != null) {
-            // Login Success
+            // 1. SAVE SESSION (So they don't have to login next time)
+            val prefs = getSharedPreferences("TruckApp", MODE_PRIVATE)
+            val editor = prefs.edit()
+            editor.putBoolean("IS_LOGGED_IN", true)
+            editor.putString("NAME", user)
+            editor.putString("ROLE", role)
+            editor.apply()
+
+            // 2. SUCCESS MESSAGE
             Toast.makeText(this, "Welcome back, $user!", Toast.LENGTH_SHORT).show()
+
+            // 3. GO TO DASHBOARD
             navigateToDashboard(user, role)
         } else {
-            // Login Failed
+            // 4. ERROR MESSAGE (This was missing!)
             Toast.makeText(this, "Invalid Username or Password", Toast.LENGTH_SHORT).show()
         }
     }

@@ -14,9 +14,9 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var db: DatabaseHelper
     private lateinit var username: String
     private lateinit var userRole: String
+    private lateinit var userPhone: String
 
-    // List to hold data for searching
-    private var allBookings = ArrayList<String>()
+    private var allBookings = ArrayList<String>() // Raw data list
 
     private val equipmentPrices = mapOf(
         "Excavator" to 500,
@@ -30,8 +30,11 @@ class DashboardActivity : AppCompatActivity() {
         setContentView(R.layout.activity_dashboard)
 
         db = DatabaseHelper(this)
-        username = intent.getStringExtra("NAME") ?: "User"
-        userRole = intent.getStringExtra("ROLE") ?: "User"
+        username = intent.getStringExtra("NAME") ?: ""
+        userRole = intent.getStringExtra("ROLE") ?: ""
+
+        // Get user phone
+        userPhone = db.getUserPhone(username)
 
         setupHeader()
         setupLogoutButton()
@@ -44,15 +47,8 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     private fun setupHeader() {
-        val txtWelcome = findViewById<TextView>(R.id.txtWelcome)
-        txtWelcome.text = "Hello, $username"
-
-
-        val btnProfile = findViewById<ImageButton>(R.id.btnProfile)
-        btnProfile.setOnClickListener {
-            // Check if this Toast appears when you click
-            Toast.makeText(this, "Opening Settings...", Toast.LENGTH_SHORT).show()
-
+        findViewById<TextView>(R.id.txtWelcome).text = "Hello, $username"
+        findViewById<ImageButton>(R.id.btnProfile).setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)
             intent.putExtra("NAME", username)
             startActivity(intent)
@@ -61,6 +57,9 @@ class DashboardActivity : AppCompatActivity() {
 
     private fun setupLogoutButton() {
         findViewById<Button>(R.id.btnLogout).setOnClickListener {
+            val prefs = getSharedPreferences("TruckApp", MODE_PRIVATE)
+            prefs.edit().clear().apply()
+
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
@@ -71,54 +70,45 @@ class DashboardActivity : AppCompatActivity() {
     // --- USER LOGIC ---
     private fun setupUserMode() {
         findViewById<LinearLayout>(R.id.layoutUser).visibility = View.VISIBLE
-
         val spinnerTruck = findViewById<Spinner>(R.id.spinnerTruck)
         val etDate = findViewById<EditText>(R.id.etDate)
-        val btnBook = findViewById<Button>(R.id.btnBook)
         val listHistory = findViewById<ListView>(R.id.listUserHistory)
 
         val truckList = equipmentPrices.keys.toTypedArray()
         spinnerTruck.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, truckList)
 
-        refreshUserHistory(listHistory)
+        refreshUserList(listHistory)
 
         etDate.setOnClickListener {
-            showDatePicker(etDate)
+            val c = Calendar.getInstance()
+            DatePickerDialog(this, { _, y, m, d -> etDate.setText("$y-${m+1}-$d") }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show()
         }
 
-        btnBook.setOnClickListener {
+        findViewById<Button>(R.id.btnBook).setOnClickListener {
             val truck = spinnerTruck.selectedItem.toString()
             val date = etDate.text.toString()
             val price = equipmentPrices[truck] ?: 0
 
             if (date.isNotEmpty()) {
                 if (db.isTruckAvailable(truck, date)) {
-                    if (db.addBooking(username, truck, date, price)) {
-                        Toast.makeText(this, "Booking Sent for Approval!", Toast.LENGTH_LONG).show()
+                    if (db.addBooking(username, truck, date, price, userPhone)) {
+                        Toast.makeText(this, "Sent!", Toast.LENGTH_SHORT).show()
                         etDate.text.clear()
-                        refreshUserHistory(listHistory)
-                    } else {
-                        Toast.makeText(this, "Error saving booking", Toast.LENGTH_SHORT).show()
+                        refreshUserList(listHistory)
                     }
                 } else {
-                    Toast.makeText(this, "Sorry! This truck is already booked on that date.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Truck unavailable.", Toast.LENGTH_SHORT).show()
                 }
-            } else {
-                Toast.makeText(this, "Select a date first", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun refreshUserHistory(listView: ListView) {
-        val myBookings = db.getUserBookings(username)
-        listView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, myBookings)
-    }
-
-    private fun showDatePicker(target: EditText) {
-        val c = Calendar.getInstance()
-        DatePickerDialog(this, { _, y, m, d ->
-            target.setText("$y-${m + 1}-$d")
-        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show()
+    private fun refreshUserList(listView: ListView) {
+        val list = db.getUserBookings(username)
+        // FIX: The adapter now needs 3 arguments.
+        // For users, we pass an empty function { _, _ -> } because clicking does nothing for them.
+        val adapter = BookingAdapter(this, list) { _, _ -> }
+        listView.adapter = adapter
     }
 
     // --- OWNER LOGIC ---
@@ -129,64 +119,51 @@ class DashboardActivity : AppCompatActivity() {
 
         refreshOwnerList(listView)
 
-        // SEARCH LOGIC
+        findViewById<Button>(R.id.btnRefresh).setOnClickListener {
+            refreshOwnerList(listView)
+            etSearch.text.clear()
+        }
+
+        // Search Logic
         etSearch.addTextChangedListener(object : android.text.TextWatcher {
             override fun afterTextChanged(s: android.text.Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // Filter the list
                 val text = s.toString().lowercase()
                 val filteredList = allBookings.filter { it.lowercase().contains(text) }
-                listView.adapter = ArrayAdapter(this@DashboardActivity, android.R.layout.simple_list_item_1, filteredList)
+
+                // IMPORTANT: Even when searching, we must pass the click logic!
+                val adapter = BookingAdapter(this@DashboardActivity, ArrayList(filteredList)) { equip, date ->
+                    showManagementDialog(equip, date, listView)
+                }
+                listView.adapter = adapter
             }
         })
-
-        findViewById<Button>(R.id.btnRefresh).setOnClickListener {
-            refreshOwnerList(listView)
-            etSearch.text.clear() // Clear search on refresh
-            Toast.makeText(this, "Refreshed", Toast.LENGTH_SHORT).show()
-        }
-
-        listView.setOnItemClickListener { _, _, position, _ ->
-            // Note: When searching, we must get the item from the adapter, not the global list
-            val item = listView.adapter.getItem(position).toString()
-            showManagementDialog(item, listView)
-        }
     }
 
     private fun refreshOwnerList(listView: ListView) {
-        allBookings = db.getAllBookings() // Update global list
-        listView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, allBookings)
+        allBookings = db.getAllBookingsFormatted()
 
-        // Update Earnings Text
-        val total = db.getTotalEarnings()
-        val txtEarnings = findViewById<TextView>(R.id.txtTotalEarnings)
-        txtEarnings.text = "$$total"
+        // Pass the click logic directly into the Adapter
+        val adapter = BookingAdapter(this, allBookings) { equip, date ->
+            // This code runs when a row is clicked
+            showManagementDialog(equip, date, listView)
+        }
+
+        listView.adapter = adapter
+        findViewById<TextView>(R.id.txtTotalEarnings).text = "$${db.getTotalEarnings()}"
     }
 
-    private fun showManagementDialog(itemDesc: String, listView: ListView) {
-        val options = arrayOf("Approve Order", "Reject Order", "Delete Order")
-
-        AlertDialog.Builder(this)
-            .setTitle("Manage Order")
+    private fun showManagementDialog(equip: String, date: String, listView: ListView) {
+        val options = arrayOf("Approve", "Reject", "Delete")
+        AlertDialog.Builder(this).setTitle("Manage Order")
             .setItems(options) { _, which ->
                 when (which) {
-                    0 -> { // Approve
-                        db.updateStatus(itemDesc, "Approved")
-                        Toast.makeText(this, "Order Approved", Toast.LENGTH_SHORT).show()
-                    }
-                    1 -> { // Reject
-                        db.updateStatus(itemDesc, "Rejected")
-                        Toast.makeText(this, "Order Rejected", Toast.LENGTH_SHORT).show()
-                    }
-                    2 -> { // Delete
-                        db.deleteBooking(itemDesc)
-                        Toast.makeText(this, "Order Deleted", Toast.LENGTH_SHORT).show()
-                    }
+                    0 -> db.updateStatusByDetails(equip, date, "Approved")
+                    1 -> db.updateStatusByDetails(equip, date, "Rejected")
+                    2 -> db.deleteBooking(equip, date)
                 }
                 refreshOwnerList(listView)
-            }
-            .show()
+            }.show()
     }
 }

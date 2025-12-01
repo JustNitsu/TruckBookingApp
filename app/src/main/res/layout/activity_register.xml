@@ -51,6 +51,16 @@
             android:padding="10dp"
             android:layout_marginBottom="15dp"/>
 
+        <EditText
+            android:id="@+id/etRegPhone"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Phone Number"
+            android:inputType="phone"
+            android:background="#F5F5F5"
+            android:padding="10dp"
+            android:layout_marginBottom="15dp"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -63,6 +73,7 @@
             android:layout_height="50dp"
             android:background="#F5F5F5"
             android:layout_marginBottom="25dp"/>
+
 
         <Button
             android:id="@+id/btnRegister"
